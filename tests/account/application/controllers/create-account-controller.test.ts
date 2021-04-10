@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import {CreateAccountController} from "../../../../src/account/application/controllers/create-account-controller";
+import {CreateAccountController} from "@src/account/application/controllers/create-account-controller";
 
 describe("CreateAccountController", () => {
   describe(".createUser", () => {

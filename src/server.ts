@@ -1,7 +1,8 @@
+import "module-alias/register";
 import "reflect-metadata";
 
 import { createExpressServer } from 'routing-controllers';
-import {CreateAccountController} from "../src/account/application/controllers/create-account-controller";
+import {CreateAccountController} from "@src/account/application/controllers/create-account-controller";
 
 const app = createExpressServer({
   controllers: [CreateAccountController],
