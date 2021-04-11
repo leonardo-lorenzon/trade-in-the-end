@@ -22,9 +22,9 @@ export class CreateAccountController {
     return response;
   }
 
-  private onSuccess(response: Response): (account: unknown) => Promise<void> {
-    return async (account: unknown): Promise<void> => {
-      response.status(StatusCodes.OK).send(account);
+  private onSuccess(response: Response): () => Promise<void> {
+    return async (): Promise<void> => {
+      response.status(StatusCodes.NO_CONTENT).send();
     };
   }
 
