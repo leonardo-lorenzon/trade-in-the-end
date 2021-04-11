@@ -46,7 +46,8 @@
   },
   "mocha": {
     "require": [
-      "module-alias/register"
+      "module-alias/register",
+      "reflect-metadata"
     ],
     "recursive": true,
     "spec": "dist/tests"
