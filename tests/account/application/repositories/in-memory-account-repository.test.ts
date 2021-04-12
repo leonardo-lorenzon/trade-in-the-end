@@ -1,15 +1,20 @@
-import {InMemoryCreateAccountRepository} from "@src/account/application/repositories/in-memory-create-account-repository";
+import {InMemoryAccountRepository} from "@src/account/application/repositories/in-memory-account-repository";
 import {AccountBuilder} from "@tests/account/builders/account-builder";
 import {expect} from "chai";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
+import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
 
-describe("InMemoryCreateAccountRepository", () => {
+describe("InMemoryAccountRepository", () => {
+  let createAccountRepository: InMemoryAccountRepository;
+  beforeEach(() => {
+    createAccountRepository = new InMemoryAccountRepository(new InMemoryDatabase());
+  })
+
   describe(".createAccount", () => {
     it("should create an account if not exist", async () => {
       // given
       const account =  new AccountBuilder().build();
-      const createAccountRepository = new InMemoryCreateAccountRepository();
 
       try {
         // when
@@ -23,7 +28,6 @@ describe("InMemoryCreateAccountRepository", () => {
     it("should throw a domain error if try to create an account with existent username", async () => {
       // given
       const account =  new AccountBuilder().build();
-      const createAccountRepository = new InMemoryCreateAccountRepository();
 
       try {
         // when

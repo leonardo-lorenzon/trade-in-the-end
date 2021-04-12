@@ -20,13 +20,13 @@ export class CreateAccountRequest {
   public gender!: Gender;
 
   @IsNumber()
-  @Min(-90)
-  @Max(90)
+  @Min(Location.latitudeInterval.min)
+  @Max(Location.latitudeInterval.max)
   public latitude!: number;
 
   @IsNumber()
-  @Min(-180)
-  @Max(180)
+  @Min(Location.longitudeInterval.min)
+  @Max(Location.longitudeInterval.max)
   public longitude!: number;
 
   @IsArray()

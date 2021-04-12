@@ -1,6 +1,16 @@
 import assert from "assert";
 
 export class Location {
+  public static latitudeInterval = {
+    min: -90,
+    max: 90,
+  };
+
+  public static longitudeInterval = {
+    min: -180,
+    max: 180,
+  }
+
   public readonly latitude: number;
   public readonly longitude: number;
 
@@ -12,8 +22,14 @@ export class Location {
   }
 
   private validatePosition(latitude: number, longitude: number): void {
-    assert(latitude <= 90 && latitude >= -90, "Invalid latitude")
-    assert(longitude <= 180 && latitude >= -180, "Invalid longitude")
+    assert(
+      latitude <= Location.latitudeInterval.max && latitude >= Location.latitudeInterval.min,
+      "Invalid latitude"
+    );
+    assert(
+      longitude <= Location.longitudeInterval.max && latitude >= Location.longitudeInterval.min,
+      "Invalid longitude"
+    );
 
   }
 }

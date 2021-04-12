@@ -1,19 +1,22 @@
 import {CreateAccountRepository} from "@src/account/domain/repositories/create-account-repository";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 import {Account} from "@src/account/domain/contracts/account";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
+import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
 
 @injectable()
-export class InMemoryCreateAccountRepository implements CreateAccountRepository {
-  private readonly accounts: Map<string, Account> = new Map<string, Account>();
+export class InMemoryAccountRepository implements CreateAccountRepository {
+  public constructor(
+    @inject(InMemoryDatabase) private readonly database: InMemoryDatabase,
+  ) {}
 
   public async createAccount(account: Account): Promise<void> {
-    if (this.accounts.has(account.username)) {
+    if (this.database.hasAccount(account.username)) {
       throw new DomainError(ERRORS.usernameAlreadyExist);
     }
 
-    this.accounts.set(account.username, account)
+    this.database.insertAccount(account);
   }
 
 }
