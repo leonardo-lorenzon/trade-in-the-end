@@ -8,6 +8,14 @@ export class ItemBuilder extends BaseBuilder<Item, ItemBuilder> {
     super(ItemBuilder);
   }
 
+  public withItemName(itemName: ItemName): ItemBuilder {
+    return this.newBuilder((item) => item.name = itemName);
+  }
+
+  public withQuantity(quantity: number): ItemBuilder {
+    return this.newBuilder((item) => item.quantity = quantity);
+  }
+
   protected buildDefault(): Item {
     return new Item(
       faker.random.arrayElement(Object.values(ItemName)),
