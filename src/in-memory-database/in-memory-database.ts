@@ -9,6 +9,7 @@ export class InMemoryDatabase {
   private readonly accounts: Map<string, Account> = new Map<string, Account>();
   private readonly locations: Map<string, Location> = new Map<string, Location>();
   private inventory: Map<string, Map<ItemName, number>> = new Map<string, Map<ItemName, number>>();
+  private infected: Map<string, string[]> = new Map<string, string[]>();
 
   public insertAccount(account: Account): void {
     this.accounts.set(account.username, account)
@@ -56,5 +57,25 @@ export class InMemoryDatabase {
     })
 
     return items;
+  }
+
+  public getReportersForUsername(username: string): string[] {
+    const reporters = this.infected.get(username);
+
+    if (reporters === undefined) {
+      return [];
+    }
+
+    return reporters;
+  }
+
+  public reportInfectedUsername(reporterUsername: string, infectedUsername: string): void {
+    const reporters = this.infected.get(infectedUsername) || [];
+
+    // copy array
+    const newReporters = reporters.map((reporter) =>  reporter);
+    newReporters.push(reporterUsername);
+
+    this.infected.set(infectedUsername, newReporters);
   }
 }
