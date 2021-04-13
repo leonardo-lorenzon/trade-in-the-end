@@ -6,11 +6,12 @@ import {Location} from "@src/account/domain/contracts/location";
 import {AddItemsRepository} from "@src/inventory/domain/repositories/add-items-repository";
 import {Item} from "@src/inventory/domain/contracts/item";
 import {DomainError} from "@src/common/domain-error";
+import {noop} from "@src/lib/noop";
 
 @injectable()
 export class CreateAccountCommand {
-  public onSuccess!: (account: Account) => void;
-  public onError!: (error: DomainError) => void;
+  public onSuccess: (account: Account) => void = noop;
+  public onError: (error: DomainError) => void = noop;
 
   public constructor(
     @inject(CreateAccountRepository) private readonly createAccountRepository: CreateAccountRepository,
@@ -19,7 +20,7 @@ export class CreateAccountCommand {
   ) {}
 
   public async execute(account: Account, location: Location, items: Item[]): Promise<void> {
-    // TODO need idempotency mechanism to retry if the first request was completed.
+    // TODO need idempotency mechanism to retry to avoid store inconsistent data
     try {
       await this.createAccountRepository.createAccount(account);
       await this.locationRepository.upsertLocation(account.username, location)
