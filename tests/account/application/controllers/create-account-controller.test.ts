@@ -9,11 +9,10 @@ describe("CreateAccountController", () => {
   describe(".createUser", () => {
     it("should send OK if onSuccess callback is called", async () => {
       // given
-      const { controller, createAccountCommand } = new CreateAccountControllerFixture();
+      const { controller } = new CreateAccountControllerFixture();
 
       const request = new CreateAccountRequestBuilder().build()
 
-      createAccountCommand.withSuccess(request.buildAccount());
 
       const response = createResponse();
 

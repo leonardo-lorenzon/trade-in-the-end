@@ -1,10 +1,10 @@
 import {CreateAccountController} from "@src/account/application/controllers/create-account-controller";
-import {CreateAccountCommandStub} from "@tests/account/stubs/create-account-command-stub";
+import {CreateAccountCommandFixture} from "@tests/account/fixtures/create-account-command-fixture";
 
 export class CreateAccountControllerFixture {
-  public createAccountCommand = new CreateAccountCommandStub();
+  public fixture = new CreateAccountCommandFixture();
 
   public get controller(): CreateAccountController {
-    return new CreateAccountController(this.createAccountCommand)
+    return new CreateAccountController(this.fixture.command)
   }
 }
