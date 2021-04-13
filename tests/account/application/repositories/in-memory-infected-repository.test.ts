@@ -22,7 +22,7 @@ describe("InMemoryInfectedRepository", () => {
       // when
       for (let i = 0; i < INFECTED_THRESHOLD; i++) {
         const reporterUsername = faker.name.lastName();
-        await infectedRepository.reportInfected(reporterUsername, username);
+        await infectedRepository.reportInfection(reporterUsername, username);
       }
 
       const isInfected = await infectedRepository.isInfected(username)
@@ -32,7 +32,7 @@ describe("InMemoryInfectedRepository", () => {
     });
   });
 
-  describe(".reportInfected", () => {
+  describe(".reportInfection", () => {
     it("should throw a domain error when a infected user try to report others", async () => {
       // given
       const reporterInfected = faker.name.lastName();
@@ -41,12 +41,12 @@ describe("InMemoryInfectedRepository", () => {
       // infect reporterInfected
       for (let i = 0; i < INFECTED_THRESHOLD; i++) {
         const reporterUsername = faker.name.lastName();
-        await infectedRepository.reportInfected(reporterUsername, reporterInfected);
+        await infectedRepository.reportInfection(reporterUsername, reporterInfected);
       }
 
 
       try {
-        await infectedRepository.reportInfected(reporterInfected, otherUsername);
+        await infectedRepository.reportInfection(reporterInfected, otherUsername);
         expect.fail();
       } catch (error) {
         expect(error).instanceOf(DomainError);
@@ -60,8 +60,8 @@ describe("InMemoryInfectedRepository", () => {
       const infectedUsername = faker.name.lastName();
 
       try {
-        await infectedRepository.reportInfected(reporterUsername, infectedUsername);
-        await infectedRepository.reportInfected(reporterUsername, infectedUsername);
+        await infectedRepository.reportInfection(reporterUsername, infectedUsername);
+        await infectedRepository.reportInfection(reporterUsername, infectedUsername);
         expect.fail();
       } catch (error) {
         expect(error).instanceOf(DomainError);

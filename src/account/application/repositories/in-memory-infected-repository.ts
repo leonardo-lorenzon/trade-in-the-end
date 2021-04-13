@@ -1,5 +1,5 @@
 import {inject, injectable} from "inversify";
-import {InfectedRepository} from "@src/account/domain/repositories/infected-repository";
+import {InfectionRepository} from "@src/account/domain/repositories/infection-repository";
 import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
@@ -7,7 +7,7 @@ import {ERRORS} from "@src/common/errors";
 export const INFECTED_THRESHOLD = 5;
 
 @injectable()
-export class InMemoryInfectedRepository implements InfectedRepository {
+export class InMemoryInfectedRepository implements InfectionRepository {
   public constructor(
     @inject(InMemoryDatabase) private readonly database: InMemoryDatabase,
   ) {}
@@ -18,7 +18,7 @@ export class InMemoryInfectedRepository implements InfectedRepository {
     return reporters.length >= INFECTED_THRESHOLD;
   }
 
-  public async reportInfected(reporterUsername: string, infectedUsername: string): Promise<void> {
+  public async reportInfection(reporterUsername: string, infectedUsername: string): Promise<void> {
     if (await this.isInfected(reporterUsername)) {
       throw new DomainError(ERRORS.infectedAccount)
     }

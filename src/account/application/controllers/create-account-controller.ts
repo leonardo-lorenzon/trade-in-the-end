@@ -14,7 +14,7 @@ export class CreateAccountController {
   public constructor(
     @inject(CreateAccountCommand) private readonly createAccountCommand: CreateAccountCommand,
   ) {}
-  @Post('/create/account')
+  @Post("/create/account")
   public async createUser(
     @Res() response: Response,
     @Body() request: CreateAccountRequest,

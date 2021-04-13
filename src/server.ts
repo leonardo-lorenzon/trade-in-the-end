@@ -5,11 +5,15 @@ import {diContainer} from "@src/di-container";
 
 import {createExpressServer, useContainer} from 'routing-controllers';
 import {CreateAccountController} from "@src/account/application/controllers/create-account-controller";
+import {ReportInfectionController} from "@src/account/application/controllers/report-infection-controller";
 
 useContainer(diContainer);
 
 const app = createExpressServer({
-  controllers: [CreateAccountController],
+  controllers: [
+    CreateAccountController,
+    ReportInfectionController
+  ],
 });
 
 const port = 5000;
