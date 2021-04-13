@@ -1,10 +1,10 @@
 import {ReportInfectionController} from "@src/account/application/controllers/report-infection-controller";
-import {ReportInfectionCommandStub} from "@tests/account/stubs/report-infection-command-stub";
+import {ReportInfectionCommandFixture} from "@tests/account/fixtures/report-infection-command-fixture";
 
 export class ReportInfectionControllerFixture {
-  public command = new ReportInfectionCommandStub().withSuccess();
+  public fixture = new ReportInfectionCommandFixture();
 
   public get controller(): ReportInfectionController {
-    return new ReportInfectionController(this.command)
+    return new ReportInfectionController(this.fixture.command)
   }
 }

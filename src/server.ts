@@ -6,13 +6,15 @@ import {diContainer} from "@src/di-container";
 import {createExpressServer, useContainer} from 'routing-controllers';
 import {CreateAccountController} from "@src/account/application/controllers/create-account-controller";
 import {ReportInfectionController} from "@src/account/application/controllers/report-infection-controller";
+import {UpdateLocationController} from "@src/account/application/controllers/update-location-controller";
 
 useContainer(diContainer);
 
 const app = createExpressServer({
   controllers: [
     CreateAccountController,
-    ReportInfectionController
+    ReportInfectionController,
+    UpdateLocationController,
   ],
 });
 

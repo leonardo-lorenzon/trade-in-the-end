@@ -1,19 +1,21 @@
 import {inject, injectable} from "inversify";
-import {InfectionRepository} from "@src/account/domain/repositories/infection-repository";
+import {LocationRepository} from "@src/account/domain/repositories/location-repository";
+import {Location} from "@src/account/domain/contracts/location";
 import {noop} from "@src/lib/noop";
 import {DomainError} from "@src/common/domain-error";
 
 @injectable()
-export class ReportInfectionCommand {
+export class UpdateLocationCommand {
   public onSuccess: () => void = noop;
   public onError: (error: DomainError) => void = noop;
 
   public constructor(
-    @inject(InfectionRepository) private readonly repository: InfectionRepository,
+    @inject(LocationRepository) private readonly repository: LocationRepository,
   ) {}
-  public async execute(reporterUsername: string, infectedUsername: string): Promise<void> {
+
+  public async execute(username: string, location: Location): Promise<void> {
     try {
-      await this.repository.reportInfection(reporterUsername, infectedUsername);
+      await this.repository.upsertLocation(username, location);
       this.onSuccess();
     } catch (error: unknown) {
       if (error instanceof DomainError) {

@@ -12,6 +12,8 @@ import {ReportInfectionCommand} from "@src/account/domain/commands/report-infect
 import {ReportInfectionController} from "@src/account/application/controllers/report-infection-controller";
 import {InfectionRepository} from "@src/account/domain/repositories/infection-repository";
 import {InMemoryInfectedRepository} from "@src/account/application/repositories/in-memory-infected-repository";
+import {UpdateLocationCommand} from "@src/account/domain/commands/update-location-command";
+import {UpdateLocationController} from "@src/account/application/controllers/update-location-controller";
 
 const diContainer = new Container();
 
@@ -23,6 +25,8 @@ diContainer.bind(LocationRepository).to(InMemoryLocationRepository);
 diContainer.bind(ReportInfectionCommand).toSelf();
 diContainer.bind(ReportInfectionController).toSelf();
 diContainer.bind(InfectionRepository).to(InMemoryInfectedRepository);
+diContainer.bind(UpdateLocationCommand).toSelf();
+diContainer.bind(UpdateLocationController).toSelf();
 
 // inventory
 diContainer.bind(AddItemsRepository).to(InMemoryInventoryRepository);
