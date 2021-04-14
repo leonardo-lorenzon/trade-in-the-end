@@ -4,9 +4,10 @@ import {Account} from "@src/account/domain/contracts/account";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
 import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
+import {AccountInformationRepository} from "@src/account/domain/repositories/account-information-repository";
 
 @injectable()
-export class InMemoryAccountRepository implements CreateAccountRepository {
+export class InMemoryAccountRepository implements CreateAccountRepository, AccountInformationRepository {
   public constructor(
     @inject(InMemoryDatabase) private readonly database: InMemoryDatabase,
   ) {}
@@ -17,6 +18,10 @@ export class InMemoryAccountRepository implements CreateAccountRepository {
     }
 
     this.database.insertAccount(account);
+  }
+
+  public async getNumberOfAccounts(): Promise<number> {
+    return this.database.getNumberOfAccounts();
   }
 
 }

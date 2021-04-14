@@ -6,9 +6,12 @@ import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
 import {TradeItemsRepository} from "@src/inventory/domain/repositories/trade-items-repository";
 import {Trade} from "@src/inventory/domain/contracts/trade";
+import {InventoryInformationRepository} from "@src/inventory/domain/repositories/inventory-information-repository";
+import {Account} from "@src/account/domain/contracts/account";
+import {ItemPoints} from "@src/inventory/domain/contracts/item-points";
 
 @injectable()
-export class InMemoryInventoryRepository implements AddItemsRepository, TradeItemsRepository {
+export class InMemoryInventoryRepository implements AddItemsRepository, TradeItemsRepository, InventoryInformationRepository {
   public constructor(
     @inject(InMemoryDatabase) private readonly database: InMemoryDatabase,
   ) {}
@@ -36,6 +39,18 @@ export class InMemoryInventoryRepository implements AddItemsRepository, TradeIte
     const isSellerItemsEnough = this.database.isItemsAvailable(trade.sellerUsername, trade.sellerItems);
 
     return isOwnerItemsEnough && isSellerItemsEnough;
+  }
+
+  public async getAllItemsFromAccounts(accounts: Account[]): Promise<Item[]> {
+    return this.database.getAllItemsFromAccounts(accounts);
+  }
+
+  public async getInventory(): Promise<Item[]> {
+    return this.database.getInventory();
+  }
+
+  public async getItemsPoints(): Promise<ItemPoints[]> {
+    return this.database.getItemsPoints();
   }
 
   private getTotalPoints(items: Item[]): number {

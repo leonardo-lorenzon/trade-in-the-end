@@ -3,6 +3,7 @@ import {InfectionRepository} from "@src/account/domain/repositories/infection-re
 import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
+import {Account} from "@src/account/domain/contracts/account";
 
 export const INFECTED_THRESHOLD = 5;
 
@@ -30,6 +31,10 @@ export class InMemoryInfectedRepository implements InfectionRepository {
     }
 
     return this.database.reportInfectedUsername(reporterUsername, infectedUsername);
+  }
+
+  public async getInfectedAccounts(): Promise<Account[]> {
+    return this.database.getInfectedAccounts(INFECTED_THRESHOLD);
   }
 
 }

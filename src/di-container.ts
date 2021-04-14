@@ -17,6 +17,12 @@ import {UpdateLocationController} from "@src/account/application/controllers/upd
 import {TradeItemsRepository} from "@src/inventory/domain/repositories/trade-items-repository";
 import {TradeItemsController} from "@src/inventory/application/controllers/trade-items-controller";
 import {TradeItemsCommand} from "@src/inventory/domain/commands/trade-items-command";
+import {AccountInformationRepository} from "@src/account/domain/repositories/account-information-repository";
+import {ReportsService} from "@src/reports/domain/services/reports-service";
+import {InMemoryReportService} from "@src/reports/application/services/in-memory-report-service";
+import {GetSimpleReportCommand} from "@src/reports/domain/commands/get-simple-report-command";
+import {GetSimpleReportController} from "@src/reports/application/controllers/get-simple-report-controller";
+import {InventoryInformationRepository} from "@src/inventory/domain/repositories/inventory-information-repository";
 
 const diContainer = new Container();
 
@@ -24,6 +30,7 @@ const diContainer = new Container();
 diContainer.bind(CreateAccountCommand).toSelf();
 diContainer.bind(CreateAccountController).toSelf();
 diContainer.bind(CreateAccountRepository).to(InMemoryAccountRepository);
+diContainer.bind(AccountInformationRepository).to(InMemoryAccountRepository);
 diContainer.bind(LocationRepository).to(InMemoryLocationRepository);
 diContainer.bind(ReportInfectionCommand).toSelf();
 diContainer.bind(ReportInfectionController).toSelf();
@@ -34,8 +41,14 @@ diContainer.bind(UpdateLocationController).toSelf();
 // inventory
 diContainer.bind(AddItemsRepository).to(InMemoryInventoryRepository);
 diContainer.bind(TradeItemsRepository).to(InMemoryInventoryRepository);
+diContainer.bind(InventoryInformationRepository).to(InMemoryInventoryRepository);
 diContainer.bind(TradeItemsController).toSelf();
 diContainer.bind(TradeItemsCommand).toSelf();
+
+// reports
+diContainer.bind(ReportsService).to(InMemoryReportService);
+diContainer.bind(GetSimpleReportCommand).toSelf();
+diContainer.bind(GetSimpleReportController).toSelf();
 
 // in memory database
 diContainer.bind(InMemoryDatabase).toSelf().inSingletonScope();

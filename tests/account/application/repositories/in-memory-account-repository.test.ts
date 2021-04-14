@@ -6,9 +6,11 @@ import {ERRORS} from "@src/common/errors";
 import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
 
 describe("InMemoryAccountRepository", () => {
-  let createAccountRepository: InMemoryAccountRepository;
+  let accountRepository: InMemoryAccountRepository;
+  let database: InMemoryDatabase;
   beforeEach(() => {
-    createAccountRepository = new InMemoryAccountRepository(new InMemoryDatabase());
+    database = new InMemoryDatabase();
+    accountRepository = new InMemoryAccountRepository(database);
   })
 
   describe(".createAccount", () => {
@@ -16,13 +18,12 @@ describe("InMemoryAccountRepository", () => {
       // given
       const account =  new AccountBuilder().build();
 
-      try {
-        // when
-        await createAccountRepository.createAccount(account);
-      } catch (e) {
-        // then
-        expect.fail("Unexpected error trying create an account")
-      }
+      // when
+      await accountRepository.createAccount(account);
+
+      // then
+      const hasAccount = database.hasAccount(account.username);
+      expect(hasAccount).true;
     })
 
     it("should throw a domain error if try to create an account with existent username", async () => {
@@ -31,14 +32,29 @@ describe("InMemoryAccountRepository", () => {
 
       try {
         // when
-        await createAccountRepository.createAccount(account);
-        await createAccountRepository.createAccount(account);
+        await accountRepository.createAccount(account);
+        await accountRepository.createAccount(account);
         expect.fail("should throw an error")
       } catch (error) {
         //then
         expect(error).instanceOf(DomainError);
         expect(error.code).equal(ERRORS.usernameAlreadyExist.code);
       }
+    })
+  });
+
+  describe(".getNumberOfAccounts", () => {
+    it("should return the number of existent accounts", async () => {
+      // given
+      const account =  new AccountBuilder().build();
+      await accountRepository.createAccount(account);
+
+      // when
+      const numberOfAccounts = await accountRepository.getNumberOfAccounts();
+      const expected = 1;
+
+      // then
+      expect(numberOfAccounts).equal(expected);
     })
   })
 })

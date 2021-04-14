@@ -5,6 +5,7 @@ import {injectable} from "inversify";
 import {Item} from "@src/inventory/domain/contracts/item";
 import {ItemName} from "@src/inventory/domain/contracts/item-name";
 import {Trade} from "@src/inventory/domain/contracts/trade";
+import {ItemPoints} from "@src/inventory/domain/contracts/item-points";
 
 const DEFAULT_QUANTITY = 0;
 
@@ -28,6 +29,9 @@ export class InMemoryDatabase {
   public hasAccount(username: string): boolean {
     return this.accounts.has(username)
   }
+  public getNumberOfAccounts(): number {
+    return this.accounts.size;
+  }
 
   public upsertLocation(username: string, location: Location): void {
     this.locations.set(username, location);
@@ -47,6 +51,44 @@ export class InMemoryDatabase {
     });
 
     this.inventory.set(username, uniqueItems);
+  }
+
+  public getInventory(): Item[] {
+    const itemsMap = new Map<ItemName, number>();
+    this.inventory.forEach((value) => {
+      value.forEach((quantity, itemName) => {
+        const currentQuantity = itemsMap.get(itemName) || 0;
+        itemsMap.set(itemName, currentQuantity + quantity);
+      })
+    });
+
+    const items: Item[] = [];
+    itemsMap.forEach((quantity, itemName) => {
+      items.push(new Item(itemName, quantity))
+    })
+
+    return items;
+  }
+
+  public getAllItemsFromAccounts(accounts: Account[]): Item[] {
+    const usernames: string[] = accounts.map((item) => item.username);
+    const itemsMap = new Map<ItemName, number>();
+    this.inventory.forEach((value, username) => {
+      if (!usernames.includes(username)) {
+        return;
+      }
+      value.forEach((quantity, itemName) => {
+        const currentQuantity = itemsMap.get(itemName) || 0;
+        itemsMap.set(itemName, currentQuantity + quantity);
+      })
+    });
+
+    const items: Item[] = [];
+    itemsMap.forEach((quantity, itemName) => {
+      items.push(new Item(itemName, quantity))
+    })
+
+    return items;
   }
 
   public exchangeItems(trade: Trade): void {
@@ -101,6 +143,16 @@ export class InMemoryDatabase {
     return points;
   }
 
+  public getItemsPoints(): ItemPoints[] {
+    const itemsPoints: ItemPoints[] = [];
+
+    this.itemsPoints.forEach((points, itemName) => {
+      itemsPoints.push(new ItemPoints(itemName, points));
+    })
+
+    return itemsPoints;
+  }
+
   public getReportersForUsername(username: string): string[] {
     const reporters = this.infected.get(username);
 
@@ -119,6 +171,21 @@ export class InMemoryDatabase {
     newReporters.push(reporterUsername);
 
     this.infected.set(infectedUsername, newReporters);
+  }
+
+  public getInfectedAccounts(infectedThreshold: number): Account[] {
+    const infectedAccounts: Account[] = [];
+    this.infected.forEach((reporterUsernames, username) => {
+      if (reporterUsernames.length >= infectedThreshold) {
+        const infectedAccount = this.accounts.get(username);
+        if (infectedAccount == undefined) {
+          return;
+        }
+        infectedAccounts.push(infectedAccount);
+      }
+    });
+
+    return infectedAccounts;
   }
 
   private debitOwnerCreditSellerItems(trade: Trade): void {

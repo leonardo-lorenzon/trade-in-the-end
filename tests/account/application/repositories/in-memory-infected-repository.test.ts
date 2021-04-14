@@ -7,11 +7,14 @@ import { expect } from "chai";
 import faker from "faker";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
+import {AccountBuilder} from "@tests/account/builders/account-builder";
 
 describe("InMemoryInfectedRepository", () => {
   let infectedRepository: InMemoryInfectedRepository;
+  let database: InMemoryDatabase;
   beforeEach(() => {
-    infectedRepository = new InMemoryInfectedRepository(new InMemoryDatabase());
+    database = new InMemoryDatabase()
+    infectedRepository = new InMemoryInfectedRepository(database);
   })
 
   describe(".isInfected", () => {
@@ -69,4 +72,26 @@ describe("InMemoryInfectedRepository", () => {
       }
     });
   })
+
+  describe(".getNumberOfInfectedAccounts", () => {
+    it("should return the infected accounts given the reporters threshold", async () => {
+      // given
+      const account = new AccountBuilder().build();
+
+      database.insertAccount(account)
+
+      for (let i = 0; i < INFECTED_THRESHOLD; i++) {
+        const reporterUsername = `Jose ${i}`;
+        await infectedRepository.reportInfection(reporterUsername, account.username);
+      }
+
+      // when
+      const infectedAccounts = await infectedRepository.getInfectedAccounts();
+      const expected = 1;
+
+      // then
+      expect(infectedAccounts.length).equal(expected);
+
+    });
+  });
 })

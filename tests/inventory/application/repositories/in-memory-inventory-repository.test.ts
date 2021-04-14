@@ -7,6 +7,7 @@ import {ItemName} from "@src/inventory/domain/contracts/item-name";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
 import {TradeBuilder} from "@tests/inventory/builders/trade-builder";
+import {AccountBuilder} from "@tests/account/builders/account-builder";
 
 describe("InMemoryInventoryRepository", () => {
   let inventoryRepository: InMemoryInventoryRepository;
@@ -168,5 +169,73 @@ describe("InMemoryInventoryRepository", () => {
       // then
       expect(isAvailable).false;
     });
+  });
+
+  describe(".getInventory", () => {
+    it("should return all items from inventory", async () => {
+      // given
+      const five = 5;
+      const fiveFigiWater = new ItemBuilder()
+        .withItemName(ItemName.figiWater)
+        .withQuantity(five)
+        .build();
+      const fiveFirstAid = new ItemBuilder()
+        .withItemName(ItemName.firstAidPouch)
+        .withQuantity(five)
+        .build();
+      await inventoryRepository.addItems("aaa", [fiveFirstAid, fiveFigiWater])
+      await inventoryRepository.addItems("bbb", [fiveFirstAid, fiveFigiWater])
+
+      // when
+      const items = await inventoryRepository.getInventory();
+
+      // then
+      const expected = [
+        {
+          name: "firstAidPouch",
+          quantity: 10,
+        },
+        {
+          name: "figiWater",
+          quantity: 10,
+        },
+      ]
+      expect(items).deep.equal(expected);
+    })
+  });
+
+  describe(".getAllItemsFromAccounts", () => {
+    it("should return all items from the given accounts", async () => {
+      // given
+      const account1 = new AccountBuilder().build();
+      const account2 = new AccountBuilder().build();
+      const five = 5;
+      const fiveFigiWater = new ItemBuilder()
+        .withItemName(ItemName.figiWater)
+        .withQuantity(five)
+        .build();
+      const fiveFirstAid = new ItemBuilder()
+        .withItemName(ItemName.firstAidPouch)
+        .withQuantity(five)
+        .build();
+      await inventoryRepository.addItems(account1.username, [fiveFirstAid, fiveFigiWater])
+      await inventoryRepository.addItems(account2.username, [fiveFirstAid, fiveFigiWater])
+
+      // when
+      const items = await inventoryRepository.getAllItemsFromAccounts([account1]);
+
+      // then
+      const expected = [
+        {
+          name: "firstAidPouch",
+          quantity: 5,
+        },
+        {
+          name: "figiWater",
+          quantity: 5,
+        },
+      ]
+      expect(items).deep.equal(expected);
+    })
   });
 })

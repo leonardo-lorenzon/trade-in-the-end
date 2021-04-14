@@ -8,6 +8,7 @@ import {CreateAccountController} from "@src/account/application/controllers/crea
 import {ReportInfectionController} from "@src/account/application/controllers/report-infection-controller";
 import {UpdateLocationController} from "@src/account/application/controllers/update-location-controller";
 import {TradeItemsController} from "@src/inventory/application/controllers/trade-items-controller";
+import {GetSimpleReportController} from "@src/reports/application/controllers/get-simple-report-controller";
 
 useContainer(diContainer);
 
@@ -17,6 +18,7 @@ const app = createExpressServer({
     ReportInfectionController,
     UpdateLocationController,
     TradeItemsController,
+    GetSimpleReportController,
   ],
 });
 
