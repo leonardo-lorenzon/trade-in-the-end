@@ -6,13 +6,14 @@ import {InMemoryDatabase} from "@src/in-memory-database/in-memory-database";
 import {ItemName} from "@src/inventory/domain/contracts/item-name";
 import {DomainError} from "@src/common/domain-error";
 import {ERRORS} from "@src/common/errors";
+import {TradeBuilder} from "@tests/inventory/builders/trade-builder";
 
 describe("InMemoryInventoryRepository", () => {
-  let addItemsRepository: InMemoryInventoryRepository;
+  let inventoryRepository: InMemoryInventoryRepository;
   let database: InMemoryDatabase;
   beforeEach(() => {
     database = new InMemoryDatabase();
-    addItemsRepository = new InMemoryInventoryRepository(database);
+    inventoryRepository = new InMemoryInventoryRepository(database);
   });
 
   describe(".addItems", () => {
@@ -27,7 +28,7 @@ describe("InMemoryInventoryRepository", () => {
         .buildMany(numberOfSameItems);
 
       // when
-      await addItemsRepository.addItems(username, items);
+      await inventoryRepository.addItems(username, items);
 
       // then
       const firstItem = 0;
@@ -48,8 +49,8 @@ describe("InMemoryInventoryRepository", () => {
 
       try {
         // when
-        await addItemsRepository.addItems(username, items);
-        await addItemsRepository.addItems(username, items);
+        await inventoryRepository.addItems(username, items);
+        await inventoryRepository.addItems(username, items);
         expect.fail("Should throw a domain error");
       } catch (error) {
         // then
@@ -59,4 +60,113 @@ describe("InMemoryInventoryRepository", () => {
 
     });
   })
+
+  describe(".trade", () => {
+    it("should exchange the proposed items on trade between the accounts", async () => {
+      // given
+      const ownerUsername = "Maria";
+      const sellerUsername = "João";
+
+      const ownerItem = new ItemBuilder()
+        .withItemName(ItemName.ak47)
+        .build();
+      const sellerItem = new ItemBuilder()
+        .withItemName(ItemName.figiWater)
+        .build();
+
+      const trade = new TradeBuilder()
+        .withOwnerUsername(ownerUsername)
+        .withSellerUsername(sellerUsername)
+        .withOwnerItems([ownerItem])
+        .withSellerItems([sellerItem])
+        .build();
+
+      await inventoryRepository.addItems(ownerUsername, [ownerItem]);
+      await inventoryRepository.addItems(sellerUsername, [sellerItem]);
+
+      // when
+      await inventoryRepository.trade(trade);
+
+      // then
+      const expectedOwnerItems = [
+        {
+          name: ItemName.ak47,
+          quantity: 0,
+        },
+        {
+          name: ItemName.figiWater,
+          quantity: sellerItem.quantity
+        }
+      ];
+      const expectedSellerItems = [
+        {
+          name: ItemName.figiWater,
+          quantity: 0,
+        },
+        {
+          name: ItemName.ak47,
+          quantity: ownerItem.quantity,
+        }
+      ];
+      expect(database.retrieveItems(trade.ownerUsername)).deep.equal(expectedOwnerItems);
+      expect(database.retrieveItems(trade.sellerUsername)).deep.equal(expectedSellerItems);
+    })
+  });
+
+  describe(".isTradePointsValid", () => {
+    it("should return true if points match", async () => {
+      // given
+      const trade = new TradeBuilder()
+        .withValidTradePoints()
+        .build();
+
+      // when
+      const isValid = await inventoryRepository.isTradePointsValid(trade);
+
+      // then
+      expect(isValid).true;
+    });
+
+    it("should return false if points do not match", async () => {
+      // given
+      const trade = new TradeBuilder()
+        .withInvalidTradePoints()
+        .build();
+
+      // when
+      const isValid = await inventoryRepository.isTradePointsValid(trade);
+
+      // then
+      expect(isValid).false;
+    });
+  });
+
+  describe(".isTradeItemsAvailable", () => {
+    it("should return true if items are available in both accounts", async () => {
+      // given
+      const trade = new TradeBuilder().build();
+
+      await inventoryRepository.addItems(trade.ownerUsername, trade.ownerItems);
+      await inventoryRepository.addItems(trade.sellerUsername, trade.sellerItems);
+
+      // when
+      const isAvailable = await inventoryRepository.isTradeItemsAvailable(trade);
+
+      // then
+      expect(isAvailable).true;
+    });
+
+    it("should return false if items are not enough in any of the two accounts", async () => {
+      // given
+      const trade = new TradeBuilder().build();
+
+      await inventoryRepository.addItems(trade.ownerUsername, trade.ownerItems);
+
+      // when
+      const isAvailable = await inventoryRepository.isTradeItemsAvailable(trade);
+
+      // then
+      expect(isAvailable).false;
+    });
+  });
 })

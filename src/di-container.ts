@@ -14,6 +14,9 @@ import {InfectionRepository} from "@src/account/domain/repositories/infection-re
 import {InMemoryInfectedRepository} from "@src/account/application/repositories/in-memory-infected-repository";
 import {UpdateLocationCommand} from "@src/account/domain/commands/update-location-command";
 import {UpdateLocationController} from "@src/account/application/controllers/update-location-controller";
+import {TradeItemsRepository} from "@src/inventory/domain/repositories/trade-items-repository";
+import {TradeItemsController} from "@src/inventory/application/controllers/trade-items-controller";
+import {TradeItemsCommand} from "@src/inventory/domain/commands/trade-items-command";
 
 const diContainer = new Container();
 
@@ -30,6 +33,9 @@ diContainer.bind(UpdateLocationController).toSelf();
 
 // inventory
 diContainer.bind(AddItemsRepository).to(InMemoryInventoryRepository);
+diContainer.bind(TradeItemsRepository).to(InMemoryInventoryRepository);
+diContainer.bind(TradeItemsController).toSelf();
+diContainer.bind(TradeItemsCommand).toSelf();
 
 // in memory database
 diContainer.bind(InMemoryDatabase).toSelf().inSingletonScope();

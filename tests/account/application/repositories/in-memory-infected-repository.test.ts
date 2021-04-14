@@ -21,7 +21,7 @@ describe("InMemoryInfectedRepository", () => {
 
       // when
       for (let i = 0; i < INFECTED_THRESHOLD; i++) {
-        const reporterUsername = faker.name.lastName();
+        const reporterUsername = `Jose ${i}`;
         await infectedRepository.reportInfection(reporterUsername, username);
       }
 
@@ -40,7 +40,7 @@ describe("InMemoryInfectedRepository", () => {
 
       // infect reporterInfected
       for (let i = 0; i < INFECTED_THRESHOLD; i++) {
-        const reporterUsername = faker.name.lastName();
+        const reporterUsername = `Jose ${i}`;
         await infectedRepository.reportInfection(reporterUsername, reporterInfected);
       }
 
