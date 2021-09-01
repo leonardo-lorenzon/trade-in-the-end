@@ -1,5 +1,5 @@
-# The Resident Zombie
-This is the backend application for the Codeminer 42 selection process.
+# Trade in the End
+This project was built to exercise an architecture design concept for node.js with TypeScript.
 
 ## Setup
 ### Requirements
