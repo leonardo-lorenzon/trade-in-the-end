@@ -1,5 +1,6 @@
 # Trade in the End
-This project was built to exercise an architecture design concept for node.js with TypeScript.
+This project was built to exercise an architecture design concept in node.js with TypeScript.
+The arquitecture is based on the [Hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) also known as Ports & Adapters.
 
 ## Setup
 ### Requirements
